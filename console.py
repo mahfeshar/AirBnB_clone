@@ -1,39 +1,29 @@
 #!/usr/bin/python3
 """entry point of the command interpreter"""
 
-import cmd
+from cmd import Cmd
 from models.base_model import BaseModel
 from models import storage
+from models.user import User
+from models.place import Place
+from models.state import State
+from models.city import City
+from models.amenity import Amenity
+from models.review import Review
 
-class HBNBCommand(cmd.Cmd):
+
+class HBNBCommand(Cmd):
     """class for command interpreter"""
-    prompt = '(hbnb)'
-
-    @staticmethod
-    def command_check(args):
-        # print(args)
-        temp = args.partition(" ")
-        command_name = temp[0]
-        command_id = temp[2].partition(" ")[0]
-        args = temp[2].partition(" ")[2]
-
-        # print(temp)
-        # print(command_name, command_id)
-
-        if not command_name:
-            print("** class name missing **")
-            return
-        if command_name != 'BaseModel':
-            print("** class doesn't exist **")
-            return
-        if not command_id:
-            print("** instance id missing **")
-            return
-        key = command_name + '.' + command_id
-        if key not in storage.all():
-            print("** no instance found **")
-            return
-        return key, args
+    prompt = '(hbnb) '
+    models = {
+        'BaseModel': BaseModel,
+        'User': User,
+        'Place': Place,
+        'State': State,
+        'City': City,
+        'Amenity': Amenity,
+        'Review': Review
+        }
 
     def do_quit(self, arg):
         """Quit command to exit the program"""
@@ -45,8 +35,34 @@ class HBNBCommand(cmd.Cmd):
         exit()
 
     def emptyline(self):
-        """an empty line + ENTER shouldn’t execute anything"""
+        """an empty line + ENTER shouldn't execute anything"""
         pass
+
+    @staticmethod
+    def command_check(args):
+        # print(args)
+        temp = args.partition(" ")
+        class_name = temp[0]
+        command_id = temp[2].partition(" ")[0]
+        args = temp[2].partition(" ")[2]
+
+        # print(temp)
+        # print(command_name, command_id)
+
+        if not class_name:
+            print("** class name missing **")
+            return
+        if class_name not in HBNBCommand.models:
+            print("** class doesn't exist **")
+            return
+        if not command_id:
+            print("** instance id missing **")
+            return
+        key = class_name + '.' + command_id
+        if key not in storage.all():
+            print("** no instance found **")
+            return
+        return key, args
 
     def do_create(self, arg):
         """
@@ -54,8 +70,8 @@ class HBNBCommand(cmd.Cmd):
         saves it (to the JSON file) 
         and prints the id.
         """
-        if arg == 'BaseModel':
-            newModel = BaseModel()
+        if arg in HBNBCommand.models:
+            newModel = HBNBCommand.models[arg]()
             storage.save()
             print(newModel.id)
         elif not arg:
@@ -91,7 +107,7 @@ class HBNBCommand(cmd.Cmd):
         print_list = []
         if arg:
             class_name = arg.split(' ')[0]
-            if class_name != 'BaseModel':
+            if class_name not in HBNBCommand.models:
                 print("** class doesn't exist **")
                 return
             else:
@@ -139,7 +155,9 @@ class HBNBCommand(cmd.Cmd):
             # print(new_dic.__dict__)
             storage.save()
 
-
+    def do_kill(self, arg):
+        storage._FileStorage__objects = {}
+        storage.save()
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()
