@@ -25,32 +25,65 @@ class HBNBCommand(Cmd):
         'Review': Review
         }
 
-    def preloop(self) -> None:
-        print("Hello Loop")
-
-    def postloop(self) -> None:
-        print("Goodbye Loop")
-
     def precmd(self, line: str) -> str:
-        print("Before command")
+        """This method is called after the line has been input"""
+
+        # Error: User.all()User.count()
+
+        if not ('.' in line and '(' in line and ')' in line):
+            return line
+
+        # Declare command line variables
+        _command = _class = _id = _arg = ''
+        line_split = line.split('.')
+        first_paren = line_split[1].find('(')
+        second_paren = line_split[1].find(')')
+
+        # Command
+        _command = line_split[1][:first_paren]
+
+        # Class Name
+        _class = line_split[0]
+
+        # Between parentheses
+        between_parentheses = line_split[1][first_paren+1:second_paren]
+        if ', ' in between_parentheses:
+            if not ('{' in between_parentheses and '}' in between_parentheses):
+                between_list = between_parentheses.split(', ')
+                _id = between_list[0][1:-1]
+                _arg = between_list[1][1:-1].strip()
+                _arg += ' ' + between_list[2].strip()
+
+            else:
+                # id dictionary
+                between_list = between_parentheses.split(', ', 1)
+                _id = between_list[0][1:-1]
+                _arg = between_list[1]
+
+        elif between_parentheses != '':
+            # id only
+            _id = between_parentheses[1:-1]
+
+        line = ' '.join([_command, _class, _id, _arg]).strip()
         return line
-    
-    def postcmd(self, stop: bool, line: str) -> bool:
-        print("After command")
-        return stop
-
-    def parseline(self, line: str) -> tuple[str | None, str | None, str]:
-        return 
-
 
     def do_quit(self, arg):
         """Quit command to exit the program"""
         exit()
 
+    def help_quit(self):
+        """ """
+        print("Quit command to exit the program")
+        print()
+
     def do_EOF(self, arg):
         """EOF to exit the program"""
         print()
         exit()
+
+    def help_EOF(self):
+        """ """
+        print("EOF to exit the program\n")
 
     def emptyline(self):
         """an empty line + ENTER shouldn't execute anything"""
@@ -58,14 +91,10 @@ class HBNBCommand(Cmd):
 
     @staticmethod
     def command_check(args):
-        # print(args)
         temp = args.partition(" ")
         class_name = temp[0]
         command_id = temp[2].partition(" ")[0]
         args = temp[2].partition(" ")[2]
-
-        # print(temp)
-        # print(command_name, command_id)
 
         if not class_name:
             print("** class name missing **")
@@ -97,15 +126,22 @@ class HBNBCommand(Cmd):
         else:
             print("** class doesn't exist **")
 
+    def help_create(self):
+        """ """
+        print("Creates a new instance of BaseModel\n")
+
     def do_show(self, args):
         """
         Prints the string representation of an instance
         based on the class name and id.
         """
-        # print(key)
         if self.command_check(args):
             key = self.command_check(args)[0]
             print(storage.all()[key])
+
+    def help_show(self):
+        """ """
+        print("Prints the string representation of an instance\n")
 
     def do_destroy(self, args):
         """
@@ -116,6 +152,10 @@ class HBNBCommand(Cmd):
             key = self.command_check(args)[0]
             del storage._FileStorage__objects[key]
             storage.save()
+
+    def help_destroy(self):
+        """ """
+        print("Deletes an instance based on the class name and id\n")
 
     def do_all(self, arg):
         """
@@ -137,6 +177,25 @@ class HBNBCommand(Cmd):
                 print_list.append(str(value))
         print(print_list)
 
+    def help_all(self):
+        """ """
+        print("Prints all string of all instance\n")
+
+    def do_count(self, arg):
+        """
+        Retrieve the number of instances of a class
+        """
+        length = 0
+        for key, value in storage.all().items():
+            if key.split('.')[0] == arg:
+                # print(key.split('.')[0])
+                length += 1
+        print(length)
+
+    def help_count(self):
+        """ """
+        print("Retrieve the number of instances of a class\n")
+
     def do_update(self, args):
         """
         Updates an instance based on the class name and id
@@ -147,35 +206,39 @@ class HBNBCommand(Cmd):
             key = self.command_check(args)[0]
             args = self.command_check(args)[1]
 
-            # print(key)
-            # print(args)
-            # print(key.split("."))
-            # print(line)
-            # print(len(line))
+            new_dic = storage._FileStorage__objects[key]
 
-            temp = args.partition(" ")
-            if not temp[0]:
-                print("** attribute name missing **")
-                return
-            if not temp[2]:
-                print("** value missing **")
-                return
+            if not ('{' in args and '}' in args):
+                temp = args.partition(" ")
 
-            attr = temp[0]
-            second_quote = temp[2].find('\"', 1)
-            value = temp[2][1:second_quote]
+                if not temp[0]:
+                    print("** attribute name missing **")
+                    return
+                if not temp[2]:
+                    print("** value missing **")
+                    return
 
-            # print(attr)
-            # print(value)
+                attr = temp[0]
 
-            new_dic = storage.all()[key]
-            new_dic.__dict__[attr] = value
-            # print(new_dic.__dict__)
+                value = eval(temp[2])
+                new_dic.__dict__[attr] = value
+
+            else:
+                try:
+                    dic = eval(args)
+                    for attr, value in dic.items():
+                        new_dic.__dict__[attr] = value
+                except Exception:
+                    pass
+
             storage.save()
 
-    def do_kill(self, arg):
-        storage._FileStorage__objects = {}
-        storage.save()
+    def help_update(self):
+        """ """
+        print("Updates an instance based on the class name and id\n")
+    # def do_kill(self, arg):
+    #     storage._FileStorage__objects = {}
+    #     storage.save()
 
 
 if __name__ == '__main__':

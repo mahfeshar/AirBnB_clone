@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-"""Instatiate an object storage"""
+"""Models Package"""
 from models.engine.file_storage import FileStorage
 
 storage = FileStorage()
