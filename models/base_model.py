@@ -15,11 +15,12 @@ class BaseModel:
             self.created_at = self.updated_at = datetime.now()
             models.storage.new(self)
         else:
+            ft = '%Y-%m-%dT%H:%M:%S.%f'
+            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'], ft)
+            kwargs['created_at'] = datetime.strptime(kwargs['created_at'], ft)
+            del kwargs['__class__']
             for key, value in kwargs.items():
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                if key != "__class__":
-                    setattr(self, key, value)
+                setattr(self, key, value)
 
     def __str__(self):
         """should print: [<class name>] (<self.id>) <self.__dict__>"""
@@ -28,13 +29,11 @@ class BaseModel:
     def save(self):
         """updates updated_at with the current datetime"""
         self.updated_at = datetime.now()
-        # print(self.updated_at)
-        # models.storage.new(self)
         models.storage.save()
-        # print(models.storage.all())
 
     def to_dict(self):
         """Return a dictionary representation of the BaseModel instance"""
+        dic = {}
         dic = self.__dict__.copy()
         dic["__class__"] = str(type(self).__name__)
         dic["created_at"] = self.created_at.isoformat()

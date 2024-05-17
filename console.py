@@ -25,6 +25,24 @@ class HBNBCommand(Cmd):
         'Review': Review
         }
 
+    def preloop(self) -> None:
+        print("Hello Loop")
+
+    def postloop(self) -> None:
+        print("Goodbye Loop")
+
+    def precmd(self, line: str) -> str:
+        print("Before command")
+        return line
+    
+    def postcmd(self, stop: bool, line: str) -> bool:
+        print("After command")
+        return stop
+
+    def parseline(self, line: str) -> tuple[str | None, str | None, str]:
+        return 
+
+
     def do_quit(self, arg):
         """Quit command to exit the program"""
         exit()
@@ -66,8 +84,8 @@ class HBNBCommand(Cmd):
 
     def do_create(self, arg):
         """
-        Creates a new instance of BaseModel, 
-        saves it (to the JSON file) 
+        Creates a new instance of BaseModel,
+        saves it (to the JSON file)
         and prints the id.
         """
         if arg in HBNBCommand.models:
@@ -81,7 +99,7 @@ class HBNBCommand(Cmd):
 
     def do_show(self, args):
         """
-        Prints the string representation of an instance 
+        Prints the string representation of an instance
         based on the class name and id.
         """
         # print(key)
@@ -101,7 +119,7 @@ class HBNBCommand(Cmd):
 
     def do_all(self, arg):
         """
-        Prints all string representation of 
+        Prints all string representation of
         all instances based or not on the class name.
         """
         print_list = []
@@ -121,7 +139,7 @@ class HBNBCommand(Cmd):
 
     def do_update(self, args):
         """
-        Updates an instance based on the class name and id 
+        Updates an instance based on the class name and id
         by adding or updating attribute
         (save the change into the JSON file)
         """
@@ -138,15 +156,15 @@ class HBNBCommand(Cmd):
             temp = args.partition(" ")
             if not temp[0]:
                 print("** attribute name missing **")
-                return 
+                return
             if not temp[2]:
                 print("** value missing **")
                 return
-            
+
             attr = temp[0]
             second_quote = temp[2].find('\"', 1)
             value = temp[2][1:second_quote]
-            
+
             # print(attr)
             # print(value)
 
@@ -158,6 +176,7 @@ class HBNBCommand(Cmd):
     def do_kill(self, arg):
         storage._FileStorage__objects = {}
         storage.save()
+
 
 if __name__ == '__main__':
     HBNBCommand().cmdloop()

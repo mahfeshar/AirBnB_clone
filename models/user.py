@@ -7,5 +7,5 @@ class User(BaseModel):
     """This defines a user"""
     email = ''
     password = ''
-    first_time = ''
+    first_name = ''
     last_name = ''
