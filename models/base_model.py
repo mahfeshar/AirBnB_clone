@@ -2,7 +2,7 @@
 """Defines the BaseModel class."""
 
 import models
-from uuid import uuid4
+import uuid
 from datetime import datetime
 
 
@@ -11,7 +11,7 @@ class BaseModel:
     def __init__(self, *args, **kwargs):
         """Inistance for the Base class"""
         if not kwargs:
-            self.id = str(uuid4())
+            self.id = str(uuid.uuid4())
             self.created_at = self.updated_at = datetime.now()
             models.storage.new(self)
         else:
