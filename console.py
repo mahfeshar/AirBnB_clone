@@ -67,6 +67,7 @@ class HBNBCommand(Cmd):
         line = ' '.join([_command, _class, _id, _arg]).strip()
         return line
 
+    # Quit methods
     def do_quit(self, arg):
         """Quit command to exit the program"""
         exit()
@@ -111,6 +112,7 @@ class HBNBCommand(Cmd):
             return
         return key, args
 
+    # Create command
     def do_create(self, arg):
         """
         Creates a new instance of BaseModel,
@@ -130,6 +132,7 @@ class HBNBCommand(Cmd):
         """ """
         print("Creates a new instance of BaseModel\n")
 
+    # Show command
     def do_show(self, args):
         """
         Prints the string representation of an instance
@@ -143,6 +146,7 @@ class HBNBCommand(Cmd):
         """ """
         print("Prints the string representation of an instance\n")
 
+    # destroy command
     def do_destroy(self, args):
         """
         Deletes an instance based on the class name and id
@@ -157,6 +161,7 @@ class HBNBCommand(Cmd):
         """ """
         print("Deletes an instance based on the class name and id\n")
 
+    # all command
     def do_all(self, arg):
         """
         Prints all string representation of
@@ -181,6 +186,7 @@ class HBNBCommand(Cmd):
         """ """
         print("Prints all string of all instance\n")
 
+    # count command
     def do_count(self, arg):
         """
         Retrieve the number of instances of a class
@@ -196,6 +202,7 @@ class HBNBCommand(Cmd):
         """ """
         print("Retrieve the number of instances of a class\n")
 
+    # update command
     def do_update(self, args):
         """
         Updates an instance based on the class name and id
@@ -236,6 +243,8 @@ class HBNBCommand(Cmd):
     def help_update(self):
         """ """
         print("Updates an instance based on the class name and id\n")
+
+    # Kill Command to remove all objects
     # def do_kill(self, arg):
     #     storage._FileStorage__objects = {}
     #     storage.save()
