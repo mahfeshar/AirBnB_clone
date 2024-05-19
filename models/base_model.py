@@ -24,16 +24,15 @@ class BaseModel:
 
     def __str__(self):
         """should print: [<class name>] (<self.id>) <self.__dict__>"""
-        return f"[{type(self).__name__}] ({self.id}) {self.__dict__.copy()}"
+        return f"[{type(self).__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """updates updated_at with the current datetime"""
-        self.updated_at = datetime.now()
+        self.updated_at = datetime.utcnow()
         models.storage.save()
 
     def to_dict(self):
         """Return a dictionary representation of the BaseModel instance"""
-        dic = {}
         dic = self.__dict__.copy()
         dic["__class__"] = type(self).__name__
         dic["created_at"] = self.created_at.isoformat()
