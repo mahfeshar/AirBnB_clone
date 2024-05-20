@@ -61,7 +61,7 @@ class TestBaseModel(unittest.TestCase):
             j = json.load(f)
             self.assertEqual(j[key], obj.to_dict())
 
-    def test_todict(self):
+    def test_to_dict(self):
         """Test the to_dict method of a BaseModel instance."""
         obj = self.value()
         new = obj.to_dict()
