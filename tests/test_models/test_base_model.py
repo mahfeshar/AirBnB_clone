@@ -63,9 +63,17 @@ class TestBaseModel(unittest.TestCase):
 
     def test_to_dict(self):
         """Test the to_dict method of a BaseModel instance."""
-        obj = self.value()
-        new = obj.to_dict()
-        self.assertEqual(obj.to_dict(), new)
+        # obj = self.value()
+        # new = obj.to_dict()
+        # self.assertEqual(obj.to_dict(), new)
+        obj = BaseModel()
+        dic = obj.to_dict()
+
+        self.assertIsInstance(dic, dict)
+        self.assertEqual(dic["__class__"], "BaseModel")
+        self.assertEqual(dic["id"], obj.id)
+        self.assertEqual(dic["created_at"], obj.created_at.isoformat())
+        self.assertEqual(dic["updated_at"], obj.updated_at.isoformat())
 
     def test_kwargs_none(self):
         """Test instance with None as a keyword argument."""
